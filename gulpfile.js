@@ -17,12 +17,14 @@ gulp.task('html', function() {
 
 gulp.task('assets', function() {
 	return gulp.src('src/assets/**/*')
-		.pipe(gulp.dest('build/assets'));
+		.pipe(gulp.dest('build/assets'))
+		.pipe(connect.reload());
 });
 
 gulp.task('lib', function() {
 	return gulp.src('src/lib/**/*')
-		.pipe(gulp.dest('build/lib'));
+		.pipe(gulp.dest('build/lib'))
+		.pipe(connect.reload());
 });
 
 gulp.task('webserver', function() {

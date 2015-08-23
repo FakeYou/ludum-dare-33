@@ -4,6 +4,7 @@ console.log('start');
 
 var preload = require('./preload');
 var DungeonManager = require('./managers/dungeonManager');
+var StateManager = require('./managers/stateManager');
 
 var config = {
 	preload: preload,
@@ -23,16 +24,18 @@ function create() {
 
 	game.plugins.screenShake = game.plugins.add(Phaser.Plugin.ScreenShake);
 
-	dungeonManager = new DungeonManager(game);
-	dungeonManager.generate(8, 8);
-	console.log(dungeonManager);
+	game.stateManager = new StateManager(game);
+
+	game.dungeonManager = new DungeonManager(game);
+	game.dungeonManager.generate(8, 8);
+
+	game.stateManager.setState(StateManager.States.PlayerTurn);
+	console.log(game.dungeonManager);
 
 }
 
 function update() {
 
-	dungeonManager.update()
-;
 	// console.log('update');
 }
 
