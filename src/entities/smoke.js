@@ -27,6 +27,10 @@ var Smoke = function(game, group, x, y) {
 
 		this.x += (Math.sin(start / sideway) / damping) * direction;
 		this.y -= 0.1;
+
+		if(start > 1000) {
+			sprite.destroy();
+		}
 	}
 };
 

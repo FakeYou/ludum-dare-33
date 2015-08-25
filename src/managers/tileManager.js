@@ -2,14 +2,31 @@
 
 var _ = require('underscore');
 
-var TileManager = function() {
-
+var TileManager = function(game) {
+	this.game = game;
 };
 
 TileManager.Tiles = {
 	empty: {
 		name: 'empty',
 		character: ' ',
+		number: 0,
+		defaultTileIndex: 0,
+		rules: []
+	},
+
+	fixed: {
+		name: 'column',
+		character: 'I',
+		number: 0,
+		defaultTileIndex: 90,
+		rules: []
+	},
+
+	slot: {
+		name: 'slot',
+		character: 'o',
+		number: 0,
 		defaultTileIndex: 0,
 		rules: []
 	},
@@ -17,13 +34,65 @@ TileManager.Tiles = {
 	floor: {
 		name: 'floor',
 		character: '.',
+		number: 1,
 		defaultTileIndex: 1,
 		rules: []
+	},
+
+	gate: {
+		name: 'gate',
+		character: 'D',
+		number: 2,
+		defaultTileIndex: 130,
+		rules: [
+			{ tileIndex: 110, map: { s: 'gate' } },
+			{ tileIndex: 120, map: { n: 'gate' } },
+		]
+	},
+
+	exit: {
+		name: 'exit',
+		character: 'X',
+		number: 3,
+		defaultTileIndex: 131,
+		rules: [
+			{ tileIndex: 111, map: { s: 'exit' } },
+			{ tileIndex: 121, map: { n: 'exit' } },
+		]
+	},
+
+	treasure: {
+		name: 'treasure',
+		character: '@',
+		number: 4,
+		defaultTileIndex: 9,
+		rules: []
+	},
+
+	spider: {
+		name: 'spider',
+		character: 'x',
+		number: 0,
+		defaultTileIndex: 1,
+		rules: [],
+		monster: 'spider'
+	},
+
+	spearTrap: {
+		name: 'spearTrap',
+		character: '!',
+		number: 5,
+		defaultTileIndex: 94,
+		rules: [],
+		animations: {
+			trigger: [94, 95, 96, 97, 98]
+		}
 	},
 
 	wall: {
 		name: 'wall',
 		character: '#',
+		number: 2,
 		defaultTileIndex: 25,
 		rules: [
 			{ tileIndex: 22, map: { n: 'wall', ne: 'wall', e: 'wall', se: 'wall', s: 'wall', sw: 'wall', w: 'wall', nw: 'wall' } },
@@ -81,16 +150,12 @@ TileManager.Tiles = {
 			{ tileIndex: 34, map: { n: 'wall', e: 'wall' } },
 			{ tileIndex: 36, map: { n: 'wall', w: 'wall' } },
 
-
 			{ tileIndex: 10, map: { s: 'wall' } },
 			{ tileIndex: 30, map: { n: 'wall' } },
 			{ tileIndex: 41, map: { e: 'wall' } },
 			{ tileIndex: 43, map: { w: 'wall' } },
 
 			{ tileIndex: 25, map: { } },
-
-
-
 		]
 	}
 };
@@ -117,6 +182,10 @@ TileManager.prototype.getTileByChar = function(character) {
 
 	return this.charTileMap[character];
 };
+
+TileManager.prototype.getTileByName = function(name) {
+	return TileManager.Tiles[name];
+};;
 
 TileManager.prototype.resolveRules = function(tileInfo, x, y, map) {
 	var neighbours = _.mapObject(TileManager.Directions, function(coords, dir) {
@@ -148,8 +217,18 @@ TileManager.prototype.resolveRules = function(tileInfo, x, y, map) {
 		}
 	} 
 
-
 	return tileIndex;
+};
+
+TileManager.prototype.translateToGrid = function(level) {
+	var grid = _.map(level, function(row) {
+		return _.map(row, function(tile) {
+			var tileInfo = this.getTileByChar(tile);
+			return tileInfo.number;
+		}, this);
+	}, this);
+
+	return grid;
 };
 
 module.exports = TileManager;
